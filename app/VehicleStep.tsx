@@ -17,7 +17,7 @@ const CAR_DATA = [
   { id: 'g700', name: 'Jetour G700', image: '/cars/g700.png', thumb: '/cars/g700.png' },
 ];
 
-export default function VehicleStep({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
+export default function VehicleStep({ onNext, onBack }: { onNext: (model: string, trim: string) => void;onBack: () => void }) {
   const [selectedCar, setSelectedCar] = useState(CAR_DATA[1]);
   const [selectedTrim, setSelectedTrim] = useState('Luxury');
   const handleNext = () => {
@@ -111,7 +111,7 @@ export default function VehicleStep({ onNext, onBack }: { onNext: () => void; on
           <span className="text-xl">←</span> Back to Identification
         </button>
         <button 
-          onClick={onNext}
+          onClick={() => onNext(selectedCar.name, selectedTrim)}
           className="bg-[#1A1A1A] text-white px-10 py-4 rounded-xl font-bold flex items-center gap-4 hover:bg-black shadow-xl transition-all active:scale-95"
         >
           Continue to Package Selection <span>→</span>

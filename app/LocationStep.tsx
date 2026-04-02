@@ -30,8 +30,20 @@ const LOCATIONS = [
   },
 ];
 
-export default function LocationStep({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
-  const [selectedLoc, setSelectedLoc] = useState(1);
+// 1. Updated Props to accept location name
+export default function LocationStep({ onNext, onBack }: { 
+  onNext: (locationName: string) => void; 
+  onBack: () => void 
+}) {
+  const [selectedLocId, setSelectedLocId] = useState(1);
+
+  // 2. Helper to find the name and move next
+  const handleContinue = () => {
+    const selectedObj = LOCATIONS.find(loc => loc.id === selectedLocId);
+    if (selectedObj) {
+      onNext(selectedObj.name); // Sends "Doha Main Service Center" to Main.tsx
+    }
+  };
 
   return (
     <div className={`${inter.className} w-full max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500`}>
@@ -46,7 +58,6 @@ export default function LocationStep({ onNext, onBack }: { onNext: () => void; o
 
       {/* INTERACTIVE MAP AREA */}
       <div className="relative w-full h-[400px] bg-[#F2F2F2] rounded-[40px] overflow-hidden mb-10 border border-gray-100 shadow-inner">
-        {/* Replace with your map image */}
         <div className="absolute inset-0 opacity-60">
            <Image src="/map-bg.png" alt="Map" fill className="object-cover grayscale" />
         </div>
@@ -55,18 +66,18 @@ export default function LocationStep({ onNext, onBack }: { onNext: () => void; o
         {LOCATIONS.map((loc) => (
           <button
             key={loc.id}
-            onClick={() => setSelectedLoc(loc.id)}
+            onClick={() => setSelectedLocId(loc.id)}
             style={{ top: loc.coords.top, left: loc.coords.left }}
             className={`absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
-              selectedLoc === loc.id ? 'scale-125 z-30' : 'scale-100 z-10'
+              selectedLocId === loc.id ? 'scale-125 z-30' : 'scale-100 z-10'
             }`}
           >
             <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center shadow-lg transition-colors ${
-              selectedLoc === loc.id ? 'bg-[#2C2C2C] border-white text-white' : 'bg-white border-gray-200 text-black'
+              selectedLocId === loc.id ? 'bg-[#2C2C2C] border-white text-white' : 'bg-white border-gray-200 text-black'
             }`}>
               <span className="text-lg">📍</span>
             </div>
-            {selectedLoc === loc.id && (
+            {selectedLocId === loc.id && (
               <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] py-1 px-2 rounded whitespace-nowrap font-bold uppercase tracking-wider">
                 {loc.name}
               </div>
@@ -80,28 +91,28 @@ export default function LocationStep({ onNext, onBack }: { onNext: () => void; o
         {LOCATIONS.map((loc) => (
           <div 
             key={loc.id}
-            onClick={() => setSelectedLoc(loc.id)}
+            onClick={() => setSelectedLocId(loc.id)}
             className={`p-7 rounded-[32px] border-2 cursor-pointer transition-all duration-300 flex flex-col justify-between ${
-              selectedLoc === loc.id 
+              selectedLocId === loc.id 
               ? 'border-[#2C2C2C] bg-white shadow-xl translate-y-[-4px]' 
               : 'border-[#F2F2F2] bg-white hover:border-gray-300 text-gray-400'
             }`}
           >
             <div>
-              <h4 className={`font-bold text-[18px] mb-4 leading-tight ${selectedLoc === loc.id ? 'text-[#2C2C2C]' : 'text-gray-400'}`}>
+              <h4 className={`font-bold text-[18px] mb-4 leading-tight ${selectedLocId === loc.id ? 'text-[#2C2C2C]' : 'text-gray-400'}`}>
                 {loc.name}
               </h4>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <span className="text-lg">📍</span>
                   <div className="text-[13px] leading-snug">
-                    <p className={selectedLoc === loc.id ? 'text-[#545454]' : 'text-gray-300'}>{loc.address}</p>
+                    <p className={selectedLocId === loc.id ? 'text-[#545454]' : 'text-gray-300'}>{loc.address}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="text-lg">🕒</span>
                   <div className="text-[13px] leading-snug">
-                    <p className={selectedLoc === loc.id ? 'text-[#545454]' : 'text-gray-300'}>{loc.subAddress}</p>
+                    <p className={selectedLocId === loc.id ? 'text-[#545454]' : 'text-gray-300'}>{loc.subAddress}</p>
                   </div>
                 </div>
               </div>
@@ -119,7 +130,7 @@ export default function LocationStep({ onNext, onBack }: { onNext: () => void; o
           <span className="text-xl">←</span> Back to Package Selection
         </button>
         <button 
-          onClick={onNext}
+          onClick={handleContinue}
           className="bg-[#1A1A1A] text-white px-10 py-4 rounded-xl font-bold flex items-center gap-4 hover:bg-black shadow-xl transition-all active:scale-95"
         >
           Continue to Date & Time Selection <span>→</span>

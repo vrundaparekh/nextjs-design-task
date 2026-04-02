@@ -12,7 +12,8 @@ const barlow = Barlow_Condensed({
   weight: ['500', '700'],
 });
 
-export default function IdentificationStep({ onNext }: { onNext: () => void }) {
+export default function IdentificationStep({ onNext }: { onNext: (data: { customerName: string; customerEmail: string; customerPhone: string }) => void 
+}) {
   const [phone, setPhone] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -141,7 +142,7 @@ export default function IdentificationStep({ onNext }: { onNext: () => void }) {
         <div className="pt-10 flex justify-end">
           <button 
             disabled={!canContinue}
-            onClick={onNext}
+           onClick={() => onNext({ customerName: fullName, customerEmail: email, customerPhone: phone })}
             className={`${barlow.className} px-10 py-4 rounded-xl font-bold flex items-center gap-4 transition-all
               ${canContinue ? 'bg-[#1A1A1A] text-white hover:bg-black' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
           >

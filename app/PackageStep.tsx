@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
 import { Inter, Barlow_Condensed } from 'next/font/google';
-import { title } from 'process';
 
 const inter = Inter({ subsets: ['latin'], weight: ['400', '700'] });
 const barlow = Barlow_Condensed({ subsets: ['latin'], weight: ['700'] });
@@ -12,7 +11,7 @@ const PACKAGES = [
     km: '5,000 KM',
     type: 'Minor',
     duration: '1.5 Hours',
-    title:'Basic maintenance and inspection',
+    title: 'Basic maintenance and inspection',
     features: ['Oil and filter change', 'Basic fluid check', 'Visual inspection'],
   },
   {
@@ -20,7 +19,7 @@ const PACKAGES = [
     km: '10,000 KM',
     type: 'Major',
     duration: '3 Hours',
-    title:'Comprehensive maintenance and service',
+    title: 'Comprehensive maintenance and service',
     features: ['Complete oil service', 'Filter replacements', 'Brake inspection', 'Battery check'],
   },
   {
@@ -28,7 +27,7 @@ const PACKAGES = [
     km: '15,000 KM',
     type: 'Major',
     duration: '4.5 Hours',
-    title:'Huge Comprehensive service',
+    title: 'Huge Comprehensive service',
     features: ['Complete maintenance package', 'Air filter replacement', 'Transmission service', 'Comprehensive diagnostics'],
   },
   {
@@ -36,13 +35,25 @@ const PACKAGES = [
     km: '20,000 KM',
     type: 'Major',
     duration: '6 Hours',
-    title:'Full comprehensive service',
+    title: 'Full comprehensive service',
     features: ['Full comprehensive service', 'All filter replacements', 'Spark plug check', 'System software update'],
   },
 ];
 
-export default function PackageStep({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
-  const [selectedPkg, setSelectedPkg] = useState(PACKAGES[0].id);
+// Update the interface to accept the package name string
+export default function PackageStep({ onNext, onBack }: { 
+  onNext: (packageName: string) => void; 
+  onBack: () => void 
+}) {
+  const [selectedPkgId, setSelectedPkgId] = useState(PACKAGES[0].id);
+
+  // Find the actual package object to pass its name back
+  const handleContinue = () => {
+    const selectedObject = PACKAGES.find(p => p.id === selectedPkgId);
+    if (selectedObject) {
+      onNext(selectedObject.km); // Passes "5,000 KM", etc.
+    }
+  };
 
   return (
     <div className={`${inter.className} w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500`}>
@@ -60,16 +71,16 @@ export default function PackageStep({ onNext, onBack }: { onNext: () => void; on
         {PACKAGES.map((pkg) => (
           <div
             key={pkg.id}
-            onClick={() => setSelectedPkg(pkg.id)}
+            onClick={() => setSelectedPkgId(pkg.id)}
             className={`relative p-8 rounded-[32px] border-2 cursor-pointer transition-all duration-300 flex flex-col h-full ${
-              selectedPkg === pkg.id 
+              selectedPkgId === pkg.id 
               ? 'border-[#2C2C2C] bg-white shadow-xl scale-[1.02]' 
               : 'border-[#F2F2F2] bg-[#F9F9F9] hover:border-gray-300'
             }`}
           >
             {/* Package Header */}
             <div className="flex justify-between items-start mb-6">
-              <h3 className={`text-[24px] font-bold ${selectedPkg === pkg.id ? 'text-[#2C2C2C]' : 'text-gray-400'}`}>
+              <h3 className={`text-[24px] font-bold ${selectedPkgId === pkg.id ? 'text-[#2C2C2C]' : 'text-gray-400'}`}>
                 {pkg.km} Service
               </h3>
               <span className={`px-4 py-1 rounded-full text-[12px] font-bold uppercase tracking-wider ${
@@ -80,12 +91,14 @@ export default function PackageStep({ onNext, onBack }: { onNext: () => void; on
                 {pkg.type}
               </span>
             </div>
-              <h5 className="text-[#2C2C2C] font-bold text-sm mb-4">{pkg.title}</h5>
+            
+            <h5 className="text-[#2C2C2C] font-bold text-sm mb-2">{pkg.title}</h5>
 
             {/* Duration */}
             <p className="text-[#2C2C2C] font-bold text-sm mb-4">
               Estimated Duration: <span className="text-[#545454] font-medium">{pkg.duration}</span>
             </p>
+
             {/* Feature List */}
             <ul className="space-y-2 mb-6 flex-grow">
               {pkg.features.map((feat, i) => (
@@ -95,8 +108,8 @@ export default function PackageStep({ onNext, onBack }: { onNext: () => void; on
               ))}
             </ul>
 
-            {/* Selection Indicator (Bottom Right) */}
-            {selectedPkg === pkg.id && (
+            {/* Selection Indicator */}
+            {selectedPkgId === pkg.id && (
               <div className="absolute bottom-6 right-8 w-6 h-6 bg-[#2C2C2C] rounded-full flex items-center justify-center">
                 <span className="text-white text-xs">✓</span>
               </div>
@@ -114,7 +127,7 @@ export default function PackageStep({ onNext, onBack }: { onNext: () => void; on
           <span className="text-xl">←</span> Back to Vehicle Selection
         </button>
         <button 
-          onClick={onNext}
+          onClick={handleContinue}
           className="bg-[#1A1A1A] text-white px-10 py-4 rounded-xl font-bold flex items-center gap-4 hover:bg-black shadow-xl transition-all active:scale-95"
         >
           Continue to Location Selection <span>→</span>

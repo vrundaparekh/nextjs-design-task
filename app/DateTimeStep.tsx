@@ -5,7 +5,7 @@ import { Barlow_Condensed, Inter } from 'next/font/google';
 const barlow = Barlow_Condensed({ subsets: ['latin'], weight: ['700'] });
 const inter = Inter({ subsets: ['latin'], weight: ['400', '700'] });
 
-export default function DateTimeStep({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
+export default function DateTimeStep({ onNext, onBack }: { onNext: (date: number, time: string) => void; onBack: () => void }) {
   const [selectedDate, setSelectedDate] = useState(19);
   const [selectedTime, setSelectedTime] = useState('10:00 AM');
 
@@ -15,7 +15,7 @@ export default function DateTimeStep({ onNext, onBack }: { onNext: () => void; o
   ];
 
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  // Simplified March 2026 calendar data
+  
   const calendarDays = [
     { day: 28, current: false }, { day: 29, current: false }, { day: 30, current: false },
     { day: 1, current: true }, { day: 2, current: true }, { day: 3, current: true }, { day: 4, current: true },
@@ -30,7 +30,7 @@ export default function DateTimeStep({ onNext, onBack }: { onNext: () => void; o
   ];
 
   return (
-    <div className={`${inter.className} w-full max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500`}>
+    <div className={`${inter.className} w-full max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10`}>
       {/* Header */}
       <div className="mb-8">
         <p className="text-[#A3A3A3] text-lg font-medium mb-1">Step <span className="text-black font-bold">5</span> / 5</p>
@@ -46,9 +46,9 @@ export default function DateTimeStep({ onNext, onBack }: { onNext: () => void; o
           <p className="text-[#2C2C2C] font-bold text-[16px]">Select Date</p>
           <div className="bg-white border border-gray-100 rounded-[32px] p-8 shadow-sm">
             <div className="flex justify-between items-center mb-8 px-4">
-              <button className="text-xl">‹</button>
+              <button className="text-xl hover:text-black transition-colors">‹</button>
               <h3 className="font-bold text-lg text-[#2C2C2C]">March 2026</h3>
-              <button className="text-xl">›</button>
+              <button className="text-xl hover:text-black transition-colors">›</button>
             </div>
             
             <div className="grid grid-cols-7 gap-2 mb-4">
@@ -61,6 +61,7 @@ export default function DateTimeStep({ onNext, onBack }: { onNext: () => void; o
               {calendarDays.map((d, i) => (
                 <button
                   key={i}
+                  type="button"
                   disabled={!d.current}
                   onClick={() => setSelectedDate(d.day)}
                   className={`h-12 w-full rounded-xl flex items-center justify-center text-sm font-bold transition-all
@@ -81,6 +82,7 @@ export default function DateTimeStep({ onNext, onBack }: { onNext: () => void; o
             {timeSlots.map((slot) => (
               <button
                 key={slot}
+                type="button"
                 onClick={() => setSelectedTime(slot)}
                 className={`py-4 px-6 rounded-xl border-2 font-bold text-sm transition-all
                   ${selectedTime === slot ? 'border-[#2C2C2C] bg-white text-[#2C2C2C] shadow-md' : 'border-[#F2F2F2] bg-white text-gray-300 hover:border-gray-200'}`}
@@ -92,17 +94,23 @@ export default function DateTimeStep({ onNext, onBack }: { onNext: () => void; o
         </div>
       </div>
 
-     {/* FOOTER ACTIONS - Inside DateTimeStep */}
-<div className="flex justify-between items-center border-t border-gray-100 pt-8 mt-12">
-  <button onClick={onBack} className={`${inter.className} text-[#2C2C2C] font-bold flex items-center gap-2 hover:underline`}>
-    <span className="text-xl">←</span> Back to Location Selection
-  </button>
-  <button 
-    onClick={onNext} // This will call setStep(6) in Main.tsx
-    className={`${barlow.className} bg-[#1A1A1A] text-white px-12 py-4 rounded-xl font-bold text-lg hover:bg-black shadow-xl transition-all active:scale-95 uppercase tracking-wider`}
-  >
-    Submit Appointment
-  </button>
-</div>
+      {/* FOOTER ACTIONS */}
+      <div className="flex justify-between items-center border-t border-gray-100 pt-8 mt-12">
+        <button 
+          type="button"
+          onClick={onBack} 
+          className="text-[#2C2C2C] font-bold flex items-center gap-2 hover:underline transition-all"
+        >
+          <span className="text-xl">←</span> Back to Location Selection
+        </button>
+        <button 
+          type="button"
+          onClick={() => onNext(selectedDate, selectedTime)}
+          className={`${barlow.className} bg-[#1A1A1A] text-white px-12 py-4 rounded-xl font-bold text-lg hover:bg-black shadow-xl transition-all active:scale-95 uppercase tracking-wider`}
+        >
+          Submit Appointment
+        </button>
+      </div>
+    </div>
   );
 }
