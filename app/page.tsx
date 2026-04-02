@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { Inter,Barlow_Condensed } from 'next/font/google';
 import Header from './Header';
 import Main from './Main';
-import Footer from './Footer';
+import Footer from './Footer'; 
 
 
 const inter = Inter({
